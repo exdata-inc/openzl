@@ -7,6 +7,7 @@
 #include <ostream>
 #include <stdexcept>
 #include <vector>
+#include <string>
 
 namespace openzl::tools::logger {
 

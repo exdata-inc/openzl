@@ -182,7 +182,7 @@ std::future<SizeTimePair> CompressionUtils::tryCompress(
         const ClusteringConfig& config,
         const std::function<bool(ColumnInfo)>& filter) const
 {
-    std::vector<std::future<SizeTimePair>> futures;
+    auto futures = std::make_shared<std::vector<std::future<SizeTimePair>>>();
     // Copy clusteringConfig and filter into memory owned by ptrs and pass
     // shared_ptrs into functions
     auto configPtr = std::make_shared<const ClusteringConfig>(*config);
@@ -195,11 +195,11 @@ std::future<SizeTimePair> CompressionUtils::tryCompress(
                                 fPtr) {
             return compressSample(*ccPtr, *fPtr, samples_.at(i));
         };
-        futures.emplace_back(threadPool_->run(task, configPtr, funcPtr));
+        futures->emplace_back(threadPool_->run(task, configPtr, funcPtr));
     }
-    return threadPool_->run([futures = std::move(futures)]() mutable {
+    return threadPool_->run([futures]() {
         SizeTimePair result{};
-        for (auto& future : futures) {
+        for (auto& future : *futures) {
             result = result + future.get();
         }
         return result;

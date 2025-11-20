@@ -1,5 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+#include <stdexcept>
+
 #include "tools/io/InputSetMulti.h"
 
 namespace openzl::tools::io {
